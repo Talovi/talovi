@@ -2,40 +2,47 @@
  * src/agent.js
  *
  * BaseAgent — the foundation every domain agent extends.
- * Handles model selection, prompt assembly, and the Anthropic API call.
+ * Delegates all model calls to the active provider so agents
+ * work identically regardless of which AI backend is configured.
  */
 
-import Anthropic from '@anthropic-ai/sdk';
-import config from '../config/talovi.config.js';
+import taloviConfig from '../config/talovi.config.js';
+import { createProvider } from './providers/index.js';
 
-const client = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
-});
+// Singleton provider built from talovi.config.js at import time.
+// Agents use this unless a provider is passed explicitly to the constructor.
+const _defaultProvider = createProvider(
+  taloviConfig.provider,
+  taloviConfig.providers[taloviConfig.provider] ?? {}
+);
 
 export class BaseAgent {
   /**
    * @param {object} options
-   * @param {string} options.domain    - Domain name (used for default tier lookup)
+   * @param {string} options.domain       - Domain name (for default tier lookup)
    * @param {string} options.systemPrompt - The system prompt for this agent
+   * @param {BaseProvider} [options.provider] - Override the global provider for this agent
    */
-  constructor({ domain, systemPrompt }) {
+  constructor({ domain, systemPrompt, provider }) {
     this.domain = domain;
     this.systemPrompt = systemPrompt;
+    this.provider = provider ?? _defaultProvider;
   }
 
   /**
-   * Resolve the Claude model to use for this call.
+   * Resolve the provider model ID for a given tier.
    * Priority: explicit tier arg → domain default → 'lite'
    *
    * @param {string} [tier] - 'lite' | 'standard' | 'pro'
    * @returns {string} model ID
    */
   resolveModel(tier) {
-    const resolved = tier ?? config.domainDefaults[this.domain] ?? 'lite';
-    const model = config.models[resolved];
+    const resolved = tier ?? taloviConfig.domainDefaults[this.domain] ?? 'lite';
+    const models = this.provider.getModels();
+    const model = models[resolved];
     if (!model) {
       throw new Error(
-        `Unknown tier "${resolved}". Valid tiers: ${Object.keys(config.models).join(', ')}`
+        `Unknown tier "${resolved}". Valid tiers: ${Object.keys(models).join(', ')}`
       );
     }
     return model;
@@ -44,31 +51,45 @@ export class BaseAgent {
   /**
    * Run the agent on a user message.
    *
-   * @param {string} userMessage - The user's question or instruction
+   * @param {string} userMessage
    * @param {object} [options]
-   * @param {string} [options.tier] - Override model tier for this call
+   * @param {string} [options.tier]       - Override model tier for this call
    * @param {number} [options.max_tokens] - Override max tokens
-   * @param {Array}  [options.history] - Prior turns: [{ role, content }, ...]
-   * @returns {Promise<string>} The assistant's text response
+   * @param {Array}  [options.history]    - Prior turns: [{ role, content }, ...]
+   * @returns {Promise<string>}
    */
   async run(userMessage, options = {}) {
     const { tier, max_tokens, history = [] } = options;
 
     const model = this.resolveModel(tier);
-    const maxTok = max_tokens ?? config.generationDefaults.max_tokens;
+    const maxTok = max_tokens ?? taloviConfig.generationDefaults.max_tokens;
 
     const messages = [
       ...history,
       { role: 'user', content: userMessage },
     ];
 
-    const response = await client.messages.create({
-      model,
-      max_tokens: maxTok,
-      system: this.systemPrompt,
-      messages,
-    });
+    return this.provider.complete(messages, this.systemPrompt, { model, max_tokens: maxTok });
+  }
 
-    return response.content[0].text;
+  /**
+   * Stream the agent's response, yielding text chunks as they arrive.
+   *
+   * @param {string} userMessage
+   * @param {object} [options] - Same as run()
+   * @returns {AsyncGenerator<string>}
+   */
+  async *stream(userMessage, options = {}) {
+    const { tier, max_tokens, history = [] } = options;
+
+    const model = this.resolveModel(tier);
+    const maxTok = max_tokens ?? taloviConfig.generationDefaults.max_tokens;
+
+    const messages = [
+      ...history,
+      { role: 'user', content: userMessage },
+    ];
+
+    yield* this.provider.stream(messages, this.systemPrompt, { model, max_tokens: maxTok });
   }
 }

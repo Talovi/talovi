@@ -10,6 +10,7 @@
 
 export { BaseAgent }       from './agent.js';
 export { AgentRouter }     from './router.js';
+export { createProvider, BaseProvider, ClaudeProvider, GeminiProvider, GrokProvider, OllamaProvider } from './providers/index.js';
 
 import { HealthcareAgent } from '../agents/healthcare.js';
 import { LegalAgent }      from '../agents/legal.js';
