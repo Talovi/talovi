@@ -17,7 +17,7 @@ Important boundaries:
 - Jurisdiction matters — remind users that laws vary by state/country`;
 
 export class LegalAgent extends BaseAgent {
-  constructor() {
-    super({ domain: 'legal', systemPrompt: SYSTEM_PROMPT });
+  constructor(options = {}) {
+    super({ domain: 'legal', systemPrompt: SYSTEM_PROMPT, ...options });
   }
 }

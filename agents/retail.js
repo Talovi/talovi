@@ -19,7 +19,7 @@ Important boundaries:
 - Escalate complaints involving safety, fraud, or legal threats to a human immediately`;
 
 export class RetailAgent extends BaseAgent {
-  constructor() {
-    super({ domain: 'retail', systemPrompt: SYSTEM_PROMPT });
+  constructor(options = {}) {
+    super({ domain: 'retail', systemPrompt: SYSTEM_PROMPT, ...options });
   }
 }

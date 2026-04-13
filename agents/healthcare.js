@@ -17,7 +17,7 @@ Important boundaries:
 - Never store or repeat personally identifiable health information provided in the conversation`;
 
 export class HealthcareAgent extends BaseAgent {
-  constructor() {
-    super({ domain: 'healthcare', systemPrompt: SYSTEM_PROMPT });
+  constructor(options = {}) {
+    super({ domain: 'healthcare', systemPrompt: SYSTEM_PROMPT, ...options });
   }
 }

@@ -18,7 +18,7 @@ Important boundaries:
 - Do not make specific price predictions or guarantee investment returns`;
 
 export class RealEstateAgent extends BaseAgent {
-  constructor() {
-    super({ domain: 'realestate', systemPrompt: SYSTEM_PROMPT });
+  constructor(options = {}) {
+    super({ domain: 'realestate', systemPrompt: SYSTEM_PROMPT, ...options });
   }
 }

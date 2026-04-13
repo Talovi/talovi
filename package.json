@@ -33,10 +33,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/talovi/talovi.git"
+    "url": "https://github.com/Talovi/talovi.git"
   },
   "bugs": {
-    "url": "https://github.com/talovi/talovi/issues"
+    "url": "https://github.com/Talovi/talovi/issues"
   },
-  "homepage": "https://github.com/talovi/talovi#readme"
+  "homepage": "https://talovi.dev"
 }

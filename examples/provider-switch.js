@@ -20,9 +20,7 @@
  *   node examples/provider-switch.js ollama
  */
 
-import { LegalAgent } from '../src/index.js';
-import { createProvider } from '../src/providers/index.js';
-import taloviConfig from '../config/talovi.config.js';
+import { LegalAgent, createProvider, config as taloviConfig } from '../src/index.js';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // The question every agent will answer — unchanged across providers

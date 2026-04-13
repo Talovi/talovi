@@ -2,39 +2,67 @@
  * src/index.js
  *
  * Talovi public API surface.
- * Import from here — never from internal files directly.
+ * Always import from here — never from internal paths directly.
  *
  * Usage:
- *   import { AgentRouter, HealthcareAgent, createAgent } from 'talovi';
+ *   import { AgentRouter, HealthcareAgent, createAgent, createProvider } from 'talovi';
  */
 
-export { BaseAgent }       from './agent.js';
-export { AgentRouter }     from './router.js';
-export { createProvider, BaseProvider, ClaudeProvider, GeminiProvider, GrokProvider, OllamaProvider } from './providers/index.js';
+// ── Core ──────────────────────────────────────────────────────────────────────
+import { BaseAgent }       from './agent.js';
+import { AgentRouter }     from './router.js';
 
+// ── Providers ─────────────────────────────────────────────────────────────────
+import { createProvider, BaseProvider,
+         ClaudeProvider, GeminiProvider,
+         GrokProvider, OllamaProvider }  from './providers/index.js';
+
+// ── Domain agents ─────────────────────────────────────────────────────────────
 import { HealthcareAgent } from '../agents/healthcare.js';
 import { LegalAgent }      from '../agents/legal.js';
 import { RealEstateAgent } from '../agents/realestate.js';
 import { RetailAgent }     from '../agents/retail.js';
 import { GeneralAgent }    from '../agents/general.js';
 
-export { HealthcareAgent, LegalAgent, RealEstateAgent, RetailAgent, GeneralAgent };
+// ── Config ────────────────────────────────────────────────────────────────────
+import config from '../config/talovi.config.js';
 
-export { default as config } from '../config/talovi.config.js';
+export {
+  // core
+  BaseAgent,
+  AgentRouter,
+  // providers
+  createProvider,
+  BaseProvider,
+  ClaudeProvider,
+  GeminiProvider,
+  GrokProvider,
+  OllamaProvider,
+  // domain agents
+  HealthcareAgent,
+  LegalAgent,
+  RealEstateAgent,
+  RetailAgent,
+  GeneralAgent,
+  // config
+  config,
+};
 
 /**
  * Convenience factory — create a named domain agent without importing it directly.
+ * Pass options (e.g. { provider }) as the second argument to override defaults.
  *
  * @param {'healthcare'|'legal'|'realestate'|'retail'|'general'} domain
+ * @param {object} [options] - Forwarded to the agent constructor (e.g. { provider, tier })
  * @returns {BaseAgent}
  */
-export function createAgent(domain) {
+export function createAgent(domain, options = {}) {
   const map = {
-    healthcare: () => new HealthcareAgent(),
-    legal:      () => new LegalAgent(),
-    realestate: () => new RealEstateAgent(),
-    retail:     () => new RetailAgent(),
-    general:    () => new GeneralAgent(),
+    healthcare: () => new HealthcareAgent(options),
+    legal:      () => new LegalAgent(options),
+    realestate: () => new RealEstateAgent(options),
+    retail:     () => new RetailAgent(options),
+    general:    () => new GeneralAgent(options),
   };
 
   if (!map[domain]) {

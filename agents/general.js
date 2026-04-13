@@ -16,7 +16,7 @@ Tone: Professional but approachable. You're like a capable assistant who adapts 
 When you recognize a question that would be better handled by a specialist (healthcare, legal, real estate, or retail), say so and suggest the user try the appropriate Talovi agent.`;
 
 export class GeneralAgent extends BaseAgent {
-  constructor() {
-    super({ domain: 'general', systemPrompt: SYSTEM_PROMPT });
+  constructor(options = {}) {
+    super({ domain: 'general', systemPrompt: SYSTEM_PROMPT, ...options });
   }
 }
