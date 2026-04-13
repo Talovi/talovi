@@ -1,0 +1,38 @@
+{
+  "name": "talovi",
+  "version": "0.1.0",
+  "description": "Open source AI framework for small businesses and disadvantaged developers — powered by Claude",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node examples/demo.js",
+    "test": "node --test src/**/*.test.js"
+  },
+  "keywords": [
+    "ai",
+    "claude",
+    "anthropic",
+    "small-business",
+    "agents",
+    "healthcare",
+    "legal",
+    "real-estate",
+    "retail"
+  ],
+  "author": "Talovi Contributors",
+  "license": "MIT",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.39.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/talovi/talovi.git"
+  },
+  "bugs": {
+    "url": "https://github.com/talovi/talovi/issues"
+  },
+  "homepage": "https://github.com/talovi/talovi#readme"
+}
