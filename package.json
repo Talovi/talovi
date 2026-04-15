@@ -33,7 +33,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Talovi/talovi.git"
+    "url": "git+https://github.com/Talovi/talovi.git"
   },
   "bugs": {
     "url": "https://github.com/Talovi/talovi/issues"
