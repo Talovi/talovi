@@ -1,0 +1,6 @@
+.env.example
+.github/
+docs/
+examples/
+*.test.js
+.DS_Store
