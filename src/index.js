@@ -12,11 +12,13 @@
 import { BaseAgent }       from './agent.js';
 import { AgentRouter }     from './router.js';
 import { CostTracker, PRICING } from './cost.js';
+import { getStrings, resolveLang, SUPPORTED_LANGS, TRANSLATIONS } from './translations.js';
 
 // ── Providers ─────────────────────────────────────────────────────────────────
 import { createProvider, BaseProvider,
          ClaudeProvider, GeminiProvider,
-         GrokProvider, OllamaProvider }  from './providers/index.js';
+         GrokProvider, OllamaProvider,
+         OpenAIProvider }               from './providers/index.js';
 
 // ── Domain agents ─────────────────────────────────────────────────────────────
 import { HealthcareAgent } from '../agents/healthcare.js';
@@ -42,12 +44,18 @@ export {
   GeminiProvider,
   GrokProvider,
   OllamaProvider,
+  OpenAIProvider,
   // domain agents
   HealthcareAgent,
   LegalAgent,
   RealEstateAgent,
   RetailAgent,
   GeneralAgent,
+  // i18n
+  getStrings,
+  resolveLang,
+  SUPPORTED_LANGS,
+  TRANSLATIONS,
   // config
   config,
 };

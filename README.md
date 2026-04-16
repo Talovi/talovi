@@ -41,6 +41,7 @@ actually have access to.
 - **Three model tiers** — `lite`, `standard`, and `pro` let you match cost to complexity across any provider
 - **Bring your own key** — zero vendor lock-in, no proprietary cloud, no middleman
 - **One-line provider switching** — change a single config value to move between Claude, Gemini, OpenAI, Grok, or local Ollama
+- **Multilingual widget** — embed.js supports English, Spanish, French, Portuguese, and Chinese with auto-detection and a user-facing language switcher
 - **Open source, MIT licensed** — free to use, fork, and build on forever
 
 ---
