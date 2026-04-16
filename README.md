@@ -36,11 +36,11 @@ actually have access to.
 
 ## Features
 
-- **Model-agnostic** — works with Claude, Gemini, Grok, and Ollama out of the box
+- **Model-agnostic** — works with Claude, Gemini, Grok, OpenAI (ChatGPT), and Ollama out of the box
 - **Multi-agent routing** — built-in agents for Healthcare, Legal, Real Estate, Retail, and General business tasks
 - **Three model tiers** — `lite`, `standard`, and `pro` let you match cost to complexity across any provider
 - **Bring your own key** — zero vendor lock-in, no proprietary cloud, no middleman
-- **One-line provider switching** — change a single config value to move from Claude to Gemini to local Ollama
+- **One-line provider switching** — change a single config value to move between Claude, Gemini, OpenAI, Grok, or local Ollama
 - **Open source, MIT licensed** — free to use, fork, and build on forever
 
 ---
@@ -49,7 +49,7 @@ actually have access to.
 
 ```bash
 npm install talovi
-export ANTHROPIC_API_KEY=sk-ant-...   # or GEMINI_API_KEY, GROK_API_KEY — your call
+export ANTHROPIC_API_KEY=sk-ant-...   # or GEMINI_API_KEY, GROK_API_KEY, OPENAI_API_KEY — your call
 ```
 
 ```js
@@ -79,11 +79,12 @@ Your agent code stays exactly the same.
 | **Claude** *(default)* | Haiku | Sonnet | Opus | `ANTHROPIC_API_KEY` |
 | **Gemini** | Flash 8B | Flash | Pro | `GEMINI_API_KEY` |
 | **Grok** | Grok-3-fast | Grok-3 | Grok-3-heavy | `GROK_API_KEY` |
+| **OpenAI** | GPT-4o mini | GPT-4o | o3 | `OPENAI_API_KEY` |
 | **Ollama** | Llama3:8b | Llama3 | Llama3:70b | *(none — runs locally)* |
 
 ```js
 // config/talovi.config.js — this one line is all it takes
-export const provider = 'gemini';  // 'claude' | 'gemini' | 'grok' | 'ollama'
+export const provider = 'openai';  // 'claude' | 'gemini' | 'grok' | 'openai' | 'ollama'
 ```
 
 ---

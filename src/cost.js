@@ -16,10 +16,11 @@
 // ── Provider pricing (per token) ─────────────────────────────────────────────
 // Update these constants when providers change their rates.
 export const PRICING = {
-  claude: { input: 0.000003,  output: 0.000015 },
-  gemini: { input: 0.000001,  output: 0.000002 },
-  grok:   { input: 0.000005,  output: 0.000015 },
-  ollama: { input: 0.0,       output: 0.0       }, // local — always free
+  claude: { input: 0.000003,   output: 0.000015  },
+  gemini: { input: 0.000001,   output: 0.000002  },
+  grok:   { input: 0.000005,   output: 0.000015  },
+  openai: { input: 0.0000025,  output: 0.000010  }, // gpt-4o pricing
+  ollama: { input: 0.0,        output: 0.0        }, // local — always free
 };
 
 export class CostTracker {
