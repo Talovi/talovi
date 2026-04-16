@@ -69,7 +69,13 @@ export class GrokProvider extends BaseProvider {
       messages: this._buildMessages(messages, systemPrompt),
     });
 
-    return response.choices[0].message.content;
+    return {
+      text: response.choices[0].message.content,
+      usage: {
+        inputTokens:  response.usage?.prompt_tokens     ?? 0,
+        outputTokens: response.usage?.completion_tokens ?? 0,
+      },
+    };
   }
 
   async *stream(messages, systemPrompt, options = {}) {

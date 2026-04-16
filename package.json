@@ -1,7 +1,7 @@
 {
   "name": "talovi",
-  "version": "0.1.0",
-  "description": "Open source AI framework for small businesses and disadvantaged developers — powered by Claude",
+  "version": "0.2.0",
+  "description": "Open source AI framework for small businesses and developers with limited resources — powered by Claude",
   "main": "src/index.js",
   "type": "module",
   "scripts": {

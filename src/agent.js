@@ -8,6 +8,7 @@
 
 import taloviConfig from '../config/talovi.config.js';
 import { createProvider } from './providers/index.js';
+import { CostTracker } from './cost.js';
 
 // Singleton provider built from talovi.config.js at import time.
 // Agents use this unless a provider is passed explicitly to the constructor.
@@ -56,7 +57,7 @@ export class BaseAgent {
    * @param {string} [options.tier]       - Override model tier for this call
    * @param {number} [options.max_tokens] - Override max tokens
    * @param {Array}  [options.history]    - Prior turns: [{ role, content }, ...]
-   * @returns {Promise<string>}
+   * @returns {Promise<{ text: string, cost: number, usage: { inputTokens: number, outputTokens: number } }>}
    */
   async run(userMessage, options = {}) {
     const { tier, max_tokens, history = [] } = options;
@@ -69,7 +70,19 @@ export class BaseAgent {
       { role: 'user', content: userMessage },
     ];
 
-    return this.provider.complete(messages, this.systemPrompt, { model, max_tokens: maxTok });
+    const { text, usage } = await this.provider.complete(
+      messages, this.systemPrompt, { model, max_tokens: maxTok }
+    );
+
+    // Derive provider name from constructor (e.g. 'ClaudeProvider' → 'claude')
+    const providerName = this.provider.constructor.name
+      .replace('Provider', '')
+      .toLowerCase();
+
+    const tracker = new CostTracker(providerName);
+    const cost = tracker.calculate(usage.inputTokens, usage.outputTokens);
+
+    return { text, cost, usage };
   }
 
   /**

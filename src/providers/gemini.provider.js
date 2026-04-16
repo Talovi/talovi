@@ -78,7 +78,15 @@ export class GeminiProvider extends BaseProvider {
     });
 
     const result = await chat.sendMessage(last.content);
-    return result.response.text();
+    const meta   = result.response.usageMetadata ?? {};
+
+    return {
+      text: result.response.text(),
+      usage: {
+        inputTokens:  meta.promptTokenCount     ?? 0,
+        outputTokens: meta.candidatesTokenCount ?? 0,
+      },
+    };
   }
 
   async *stream(messages, systemPrompt, options = {}) {

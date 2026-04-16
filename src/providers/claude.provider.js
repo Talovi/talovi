@@ -39,7 +39,13 @@ export class ClaudeProvider extends BaseProvider {
       messages,
     });
 
-    return response.content[0].text;
+    return {
+      text: response.content[0].text,
+      usage: {
+        inputTokens:  response.usage?.input_tokens  ?? 0,
+        outputTokens: response.usage?.output_tokens ?? 0,
+      },
+    };
   }
 
   async *stream(messages, systemPrompt, options = {}) {

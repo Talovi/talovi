@@ -38,16 +38,16 @@ export class BaseProvider {
   }
 
   /**
-   * Send a message list to the model and return the full text response.
+   * Send a message list to the model and return the full response with usage.
    *
    * @param {Array<{ role: 'user'|'assistant', content: string }>} messages
    * @param {string} systemPrompt
    * @param {object} options
-   * @param {string} options.model     - Resolved model ID
+   * @param {string} options.model      - Resolved model ID
    * @param {number} options.max_tokens
-   * @returns {Promise<string>}
+   * @returns {Promise<{ text: string, usage: { inputTokens: number, outputTokens: number } }>}
    */
-  async complete(messages, systemPrompt, options = {}) {
+  async complete(_messages, _systemPrompt, _options = {}) {
     throw new Error(`${this.constructor.name} must implement complete()`);
   }
 
@@ -63,7 +63,7 @@ export class BaseProvider {
    * @returns {AsyncGenerator<string>}
    */
   // eslint-disable-next-line require-yield
-  async *stream(messages, systemPrompt, options = {}) {
+  async *stream(_messages, _systemPrompt, _options = {}) {
     throw new Error(`${this.constructor.name} must implement stream()`);
   }
 }

@@ -11,6 +11,7 @@
 // ── Core ──────────────────────────────────────────────────────────────────────
 import { BaseAgent }       from './agent.js';
 import { AgentRouter }     from './router.js';
+import { CostTracker, PRICING } from './cost.js';
 
 // ── Providers ─────────────────────────────────────────────────────────────────
 import { createProvider, BaseProvider,
@@ -31,6 +32,9 @@ export {
   // core
   BaseAgent,
   AgentRouter,
+  // cost tracking
+  CostTracker,
+  PRICING,
   // providers
   createProvider,
   BaseProvider,

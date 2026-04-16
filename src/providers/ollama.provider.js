@@ -58,7 +58,14 @@ export class OllamaProvider extends BaseProvider {
     }
 
     const data = await response.json();
-    return data.message.content;
+
+    return {
+      text: data.message.content,
+      usage: {
+        inputTokens:  data.prompt_eval_count ?? 0,
+        outputTokens: data.eval_count        ?? 0,
+      },
+    };
   }
 
   async *stream(messages, systemPrompt, options = {}) {
