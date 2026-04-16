@@ -9,9 +9,9 @@
 
 # Talovi
 
-**Open source AI framework for small businesses and disadvantaged developers.**
+**Open source AI framework for small businesses and developers with limited resources.**
 
-[![npm version](https://img.shields.io/badge/npm-0.1.0-brightgreen)](https://www.npmjs.com/package/talovi)
+[![npm version](https://img.shields.io/npm/v/talovi.svg)](https://www.npmjs.com/package/talovi)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![GitHub Stars](https://img.shields.io/github/stars/Talovi/talovi?style=flat)](https://github.com/Talovi/talovi/stargazers)
 [![GitHub Forks](https://img.shields.io/github/forks/Talovi/talovi?style=flat)](https://github.com/Talovi/talovi/network/members)
