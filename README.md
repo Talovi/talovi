@@ -90,6 +90,36 @@ export const provider = 'openai';  // 'claude' | 'gemini' | 'grok' | 'openai' | 
 
 ---
 
+## Multilingual support
+
+Talovi supports 5 languages out of the box:
+
+- 🇺🇸 English (`en`) — default
+- 🇪🇸 Spanish (`es`)
+- 🇫🇷 French (`fr`)
+- 🇧🇷 Portuguese (`pt`)
+- 🇨🇳 Chinese Simplified (`zh`)
+
+Set the language via the embed script tag:
+
+```html
+<script src="embed.js"
+  data-key="..."
+  data-domain="general"
+  data-lang="es">
+</script>
+```
+
+Or pass it when initializing via npm:
+
+```js
+const talovi = new Talovi({ lang: 'es' });
+```
+
+Talovi also auto-detects the visitor's browser language and falls back to English if the language is not supported. A language switcher is built into the widget so end users can change languages themselves.
+
+---
+
 ## Agent domains
 
 Every agent comes with a carefully written system prompt, sensible defaults,
