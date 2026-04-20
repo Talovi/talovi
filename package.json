@@ -1,6 +1,6 @@
 {
   "name": "talovi",
-  "version": "0.2.4",
+  "version": "0.2.6",
   "description": "Open source AI framework for small businesses and developers with limited resources — powered by Claude",
   "main": "src/index.js",
   "type": "module",
@@ -22,11 +22,11 @@
   "author": "Talovi Contributors",
   "license": "MIT",
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.39.0"
+    "@anthropic-ai/sdk": "^0.90.0"
   },
   "optionalDependencies": {
     "@google/generative-ai": "^0.24.0",
-    "openai": "^4.0.0"
+    "openai": "^6.0.0"
   },
   "engines": {
     "node": ">=18.0.0"
