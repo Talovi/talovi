@@ -2,6 +2,38 @@
   const cfg = window.TaloviConfig || {};
   if (!cfg.agentId) return;
 
+  // ── i18n ─────────────────────────────────────────────────────────────────────
+
+  const TRANSLATIONS = {
+    en: { greeting: 'Hello! How can I help you today?', placeholder: 'Type a message\u2026', sendLabel: 'Send' },
+    es: { greeting: '\u00a1Hola! \u00bfC\u00f3mo puedo ayudarte hoy?',  placeholder: 'Escribe tu mensaje\u2026',  sendLabel: 'Enviar' },
+    fr: { greeting: 'Bonjour\u00a0! Comment puis-je vous aider\u00a0?',  placeholder: 'Tapez votre message\u2026', sendLabel: 'Envoyer' },
+    pt: { greeting: 'Ol\u00e1! Como posso ajud\u00e1-lo hoje?',          placeholder: 'Digite sua mensagem\u2026', sendLabel: 'Enviar' },
+    zh: { greeting: '\u4f60\u597d\uff01\u4eca\u5929\u6211\u80fd\u5e2e\u60a8\u4ec0\u4e48\uff1f', placeholder: '\u8f93\u5165\u60a8\u7684\u6d88\u606f\u2026', sendLabel: '\u53d1\u9001' },
+  };
+
+  const SUPPORTED_NAMES = [
+    { code: 'en', label: 'English'   },
+    { code: 'es', label: 'Espa\u00f1ol'  },
+    { code: 'fr', label: 'Fran\u00e7ais' },
+    { code: 'pt', label: 'Portugu\u00eas'},
+    { code: 'zh', label: '\u4e2d\u6587'  },
+  ];
+
+  const SUPPORTED = SUPPORTED_NAMES.map(l => l.code);
+
+  function getStrings(lang) {
+    const key = SUPPORTED.includes(lang) ? lang : 'en';
+    return Object.assign({}, TRANSLATIONS.en, TRANSLATIONS[key]);
+  }
+
+  let activeLang = SUPPORTED.includes((navigator.language || '').split('-')[0])
+    ? navigator.language.split('-')[0]
+    : 'en';
+  let t = getStrings(activeLang);
+
+  // ── Config ────────────────────────────────────────────────────────────────────
+
   const color = cfg.accentColor || '#6C63FF';
   const position = cfg.position || 'bottom-right';
   const title = cfg.title || 'How can we help?';
@@ -36,13 +68,20 @@
 
   const panel = document.createElement('div');
   panel.id = 'talovi-panel';
+  const langOptions = SUPPORTED_NAMES.map(({ code, label }) =>
+    `<option value="${code}"${code === activeLang ? ' selected' : ''}>${label}</option>`
+  ).join('');
+
   panel.innerHTML = `
     <div id="talovi-resize" title="Drag to resize">⠿</div>
-    <div id="talovi-header">${title}</div>
-    <div id="talovi-messages"><div class="talovi-msg bot">Hello! How can I help you today?</div></div>
+    <div id="talovi-header" style="display:flex;align-items:center;justify-content:space-between">
+      <span>${title}</span>
+      <select id="talovi-lang" style="background:transparent;border:1px solid rgba(255,255,255,.3);color:#fff;font-size:.75rem;border-radius:4px;padding:2px 4px;cursor:pointer">${langOptions}</select>
+    </div>
+    <div id="talovi-messages"><div class="talovi-msg bot">${t.greeting}</div></div>
     <div id="talovi-input-row">
-      <input id="talovi-input" type="text" placeholder="Type a message…">
-      <button id="talovi-send">Send</button>
+      <input id="talovi-input" type="text" placeholder="${t.placeholder}">
+      <button id="talovi-send">${t.sendLabel}</button>
     </div>`;
 
   document.body.appendChild(bubble);
@@ -158,6 +197,13 @@
   }
 
   bubble.addEventListener('click', () => panel.classList.toggle('open'));
+
+  document.getElementById('talovi-lang').addEventListener('change', e => {
+    activeLang = e.target.value;
+    t = getStrings(activeLang);
+    document.getElementById('talovi-input').placeholder = t.placeholder;
+    document.getElementById('talovi-send').textContent  = t.sendLabel;
+  });
 
   async function sendMessage() {
     const input = document.getElementById('talovi-input');
