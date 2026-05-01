@@ -37,16 +37,23 @@
   const color = cfg.accentColor || '#6C63FF';
   const position = cfg.position || 'bottom-right';
   const title = cfg.title || 'How can we help?';
-  const API_BASE = (function () {
-    const s = document.currentScript;
-    return s ? s.src.replace('/widget.js', '') : '';
-  })();
+  const PROXY_URL = 'https://cloud.talovi.dev/api/demo-chat';
+
+  function getSessionId() {
+    let id = sessionStorage.getItem('talovi_session_id');
+    if (!id) {
+      id = (crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2) + Date.now().toString(36));
+      sessionStorage.setItem('talovi_session_id', id);
+    }
+    return id;
+  }
 
   const style = document.createElement('style');
   style.textContent = `
     #talovi-bubble{position:fixed;${position==='bottom-left'?'left':'right'}:20px;bottom:20px;width:52px;height:52px;border-radius:50%;background:${color};display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 20px rgba(0,0,0,.4);z-index:9999;transition:transform .2s}
     #talovi-bubble:hover{transform:scale(1.1)}
-    #talovi-bubble svg{width:26px;height:26px;fill:#fff}
+    #talovi-bubble img{pointer-events:none;display:block;width:28px;height:28px;object-fit:contain;transition:transform 0.3s ease}
+    #talovi-bubble:hover img{transform:rotate(90deg)}
     #talovi-panel{position:fixed;${position==='bottom-left'?'left':'right'}:20px;bottom:82px;width:300px;background:#1a1e2a;border-radius:14px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.5);z-index:9998;display:none;flex-direction:column;font-family:system-ui,sans-serif}
     #talovi-panel.open{display:flex}
     #talovi-header{padding:12px 14px;font-weight:600;font-size:.9rem;color:#fff;background:${color}}
@@ -64,7 +71,7 @@
 
   const bubble = document.createElement('div');
   bubble.id = 'talovi-bubble';
-  bubble.innerHTML = '<svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>';
+  bubble.innerHTML = '<img src="https://cdn.talovi.dev/talovi-logo-icon.png" width="28" height="28" alt="Talovi" style="display:block;object-fit:contain;">';
 
   const panel = document.createElement('div');
   panel.id = 'talovi-panel';
@@ -130,8 +137,6 @@
     localStorage.setItem(RESIZE_KEY, JSON.stringify({ w: panel.offsetWidth, h: panel.offsetHeight }));
   });
 
-  let conversationId = null;
-
   function escHtml(s) {
     return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
             .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
@@ -196,6 +201,18 @@
       .replace(/\*(.+?)\*/g,     '<em>$1</em>');
   }
 
+  function showUpgradeCTA(data) {
+    const msgs = document.getElementById('talovi-messages');
+    const cta = document.createElement('div');
+    cta.className = 'talovi-msg bot';
+    const ctaLink = data.ctaUrl
+      ? ` <a href="${escHtml(data.ctaUrl)}" target="_blank" rel="noopener" style="color:${color};text-decoration:underline">${escHtml(data.ctaLabel || 'Upgrade')}</a>`
+      : '';
+    cta.innerHTML = escHtml(data.message || "You've reached the demo limit.") + ctaLink;
+    msgs.appendChild(cta);
+    msgs.scrollTop = msgs.scrollHeight;
+  }
+
   bubble.addEventListener('click', () => panel.classList.toggle('open'));
 
   document.getElementById('talovi-lang').addEventListener('change', e => {
@@ -224,22 +241,23 @@
     msgs.appendChild(thinking);
     msgs.scrollTop = msgs.scrollHeight;
 
-    const payload = { agent_id: cfg.agentId, message: msg, conversation_id: conversationId };
-    console.log('[Talovi] sending chat:', payload);
-
     try {
-      const res = await fetch(`${API_BASE}/api/proxy/chat`, {
+      const res = await fetch(PROXY_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Session-ID': getSessionId(),
+        },
+        body: JSON.stringify({ agent_id: cfg.agentId, message: msg }),
       });
       const data = await res.json();
-      console.log('[Talovi] response:', res.status, data);
-      if (!res.ok) {
+      if (res.status === 429) {
+        thinking.remove();
+        showUpgradeCTA(data);
+      } else if (!res.ok) {
         thinking.textContent = data.error || 'Error getting response.';
       } else {
-        conversationId = data.conversation_id;
-        thinking.innerHTML = mdToHtml(data.message || 'Error getting response.');
+        thinking.innerHTML = mdToHtml(data.content || 'Error getting response.');
       }
     } catch (err) {
       console.error('[Talovi] fetch error:', err);
